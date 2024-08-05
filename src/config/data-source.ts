@@ -4,14 +4,15 @@ import { User } from "../entities/User";
 
 export const PostgresDataSource = new DataSource({
   type: "postgres",
-  host: "postgres",
+  host: "localhost",
   port: 5432,
   username: "postgres",
   password: "postgres",
   database: "mobility",
   synchronize: true,
-  logging: false,
-  entities: [User],
-  migrations: [],
+  logging: true,
+  entities: ["src/entities/**/*.ts"],
+  migrationsTableName: "migrations",
+  migrations: ["src/migrations/**/*.ts"],
   subscribers: [],
 });

@@ -8,5 +8,4 @@ RUN npm install
 
 COPY . .
 
-# A etapa de desenvolvimento pode ser removida para produção
-CMD ["npm", "run", "dev"]
+CMD ["npm run migration:run", "npm run dev"]

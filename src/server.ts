@@ -1,5 +1,6 @@
 import cors from "cors";
-import express, { Router, Request, Response } from "express";
+import express, { Router } from "express";
+import "dotenv/config";
 import { PostgresDataSource } from "./config/data-source";
 import logger from "./middlewares/logger";
 import carRouters from "./controllers/car";
