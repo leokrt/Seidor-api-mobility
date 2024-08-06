@@ -318,19 +318,11 @@
         "tags": ["Driver"],
         "parameters": [
           {
-            "name": "color",
+            "name": "name",
             "in": "query",
             "schema": {
               "type": "string",
-              "example": "red"
-            }
-          },
-          {
-            "name": "brand",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "example": "BMW"
+              "example": "John Doe"
             }
           }
         ],
@@ -518,6 +510,225 @@
           }
         }
       }
+    },
+    "/usage": {
+      "post": {
+        "summary": "Create a usage record",
+        "description": "This route is responsible for creating a new usage record in the database.",
+        "tags": ["Usage"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UsagePayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsageResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Get list of usage records",
+        "description": "This route retrieves usage records, with optional filters for car ID and driver ID.",
+        "tags": ["Usage"],
+        "parameters": [
+          {
+            "name": "carId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          },
+          {
+            "name": "driverId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UsageResponse"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Usage record not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/usage/{id}": {
+      "get": {
+        "summary": "Retrieve a usage record by ID",
+        "description": "This route retrieves a usage record from the database by its ID.",
+        "tags": ["Usage"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsageResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Usage record not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update a usage record by ID",
+        "description": "This route updates a usage record in the database by its ID.",
+        "tags": ["Usage"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "endDate": {
+                    "format": "date-time",
+                    "example": "2023-01-02T10:00:00.000Z"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsageResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Usage record not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -587,6 +798,69 @@
       "ErrorResponse": {
         "properties": {
           "message": { "type": "string", "example": "Driver not found" }
+        }
+      },
+      "UsagePayload": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "carId": {
+            "type": "integer",
+            "example": 1
+          },
+          "driverId": {
+            "type": "integer",
+            "example": 1
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2023-01-01T10:00:00.000Z"
+          },
+          "reason": {
+            "type": "string",
+            "example": "get the feedstock"
+          }
+        }
+      },
+      "UsageResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "number", "example": 1 },
+          "start_date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2023-01-01T10:00:00.000Z"
+          },
+          "end_date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2023-01-01T10:00:00.000Z"
+          },
+          "used_by": {
+            "$ref": "#/components/schemas/DriverResponse"
+          },
+          "used_car": {
+            "$ref": "#/components/schemas/CarResponse"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2023-01-01T10:00:00.000Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2023-01-01T10:00:00.000Z"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2023-01-01T10:00:00.000Z"
+          }
         }
       }
     }

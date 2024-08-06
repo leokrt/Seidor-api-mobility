@@ -1,6 +1,6 @@
 import { Repository } from "typeorm";
-import { Car } from "../entities/Car";
 import { PostgresDataSource } from "../config/data-source";
+import { Car } from "../entities/Car";
 import { FilterCar } from "../types/car";
 
 export class CarRepository {

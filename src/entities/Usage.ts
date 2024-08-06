@@ -16,10 +16,10 @@ export class Usage {
   id: number;
 
   @Column()
-  start_date: string;
+  start_date: Date;
 
-  @Column()
-  end_date: string;
+  @Column({ nullable: true })
+  end_date: Date;
 
   @Column()
   reason: string;

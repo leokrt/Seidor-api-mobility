@@ -41,8 +41,8 @@ router.get(
 
 router.get("/", async (req, res, next) => {
   try {
-    const { color, brand } = req.query;
-    const filter = { color, brand } as FilterDriver;
+    const { name } = req.query;
+    const filter = { name } as FilterDriver;
     const result = await driverService.findAll(filter);
 
     res.status(200).json(result);
