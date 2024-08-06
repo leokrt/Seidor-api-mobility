@@ -10,6 +10,15 @@ export class DriverService implements IDriverService {
     this.driverRepository = new DriverRepository();
   }
 
+  private async validateNameExists(name: string): Promise<void> {
+    const hasDriverWithName = await this.driverRepository.findOneBy({
+      name,
+    });
+    if (hasDriverWithName) {
+      throw new BadRequestException(409, "Name already in use");
+    }
+  }
+
   async findAll(filter?: FilterDriver): Promise<Driver[]> {
     return this.driverRepository.findAll(filter);
   }
@@ -24,16 +33,10 @@ export class DriverService implements IDriverService {
   }
 
   async createDriver(payload: DriverPayload): Promise<Driver> {
-    const hasDriverWithName = await this.driverRepository.findOneBy({
-      name: payload.name,
-    });
-    if (hasDriverWithName) {
-      throw new BadRequestException(409, "Name already in use");
-    }
+    await this.validateNameExists(payload.name);
 
     const driver = new Driver();
     Object.assign(driver, payload);
-
     return this.driverRepository.save(driver);
   }
 
@@ -45,6 +48,7 @@ export class DriverService implements IDriverService {
     if (!driver) {
       throw new NotFoundException(`Driver with id ${id} not found`);
     }
+    await this.validateNameExists(updateData.name);
 
     Object.assign(driver, updateData);
     return this.driverRepository.save(driver);

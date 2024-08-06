@@ -10,6 +10,15 @@ export class CarService implements ICarService {
     this.carRepository = new CarRepository();
   }
 
+  private async validateCarWithPlate(plate: string): Promise<void> {
+    const hasCarWithPlate = await this.carRepository.findOneBy({
+      plate,
+    });
+    if (hasCarWithPlate) {
+      throw new BadRequestException(409, "Plate already in use");
+    }
+  }
+
   async findAll(filter?: FilterCar): Promise<Car[]> {
     return this.carRepository.findAll(filter);
   }
@@ -24,12 +33,7 @@ export class CarService implements ICarService {
   }
 
   async createCar(payload: CarPayload): Promise<Car> {
-    const hasCarWithPlate = await this.carRepository.findOneBy({
-      plate: payload.plate,
-    });
-    if (hasCarWithPlate) {
-      throw new BadRequestException(409, "Plate already in use");
-    }
+    await this.validateCarWithPlate(payload.plate);
 
     const car = new Car();
     Object.assign(car, payload);
@@ -38,6 +42,9 @@ export class CarService implements ICarService {
   }
 
   async updateCar(id: number, updateData: Partial<Car>): Promise<Car | null> {
+    if (updateData.plate) {
+      await this.validateCarWithPlate(updateData.plate);
+    }
     const car = await this.carRepository.findById(id);
     if (!car) {
       throw new NotFoundException(`Car with id ${id} not found`);

@@ -153,15 +153,20 @@ describe("Unit tests for Driver service", () => {
     it("should return the updated driver if it exists", async () => {
       jest
         .spyOn(driverRepository["repository"], "findOneBy")
-        .mockResolvedValue(driver);
+        .mockResolvedValueOnce(driver);
       const mockSave = jest
         .spyOn(driverRepository["repository"], "save")
         .mockResolvedValue({ ...driver, name: "Leo" });
 
-      const result = await serviceDriver.updateDriver(1, { name: "Leo" });
+      const result = await serviceDriver.updateDriver(1, {
+        name: "Leo Ferreira",
+      });
 
       expect(result.name).toBe("Leo");
-      expect(mockSave).toHaveBeenCalledWith({ ...driver, name: "Leo" });
+      expect(mockSave).toHaveBeenCalledWith({
+        ...driver,
+        name: "Leo Ferreira",
+      });
     });
   });
 });
