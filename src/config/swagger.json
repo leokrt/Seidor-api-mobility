@@ -20,7 +20,7 @@
           }
         },
         "responses": {
-          "200": {
+          "201": {
             "description": "Success",
             "content": {
               "application/json": {
@@ -57,7 +57,7 @@
       },
       "get": {
         "summary": "Get list of cars",
-        "description": "This rout is responsible to retrieves vehicles",
+        "description": "This route retrieves vehicles, with optional filters for color and brand.",
         "tags": ["Vehicle"],
         "parameters": [
           {
@@ -83,6 +83,7 @@
             "content": {
               "application/json": {
                 "schema": {
+                  "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/CarResponse"
                   }
@@ -164,7 +165,7 @@
       },
       "patch": {
         "summary": "Update a car by ID",
-        "description": "This route retrieves a car from the database by its ID.",
+        "description": "This route updates a car in the database by its ID.",
         "tags": ["Vehicle"],
         "parameters": [
           {
@@ -221,7 +222,7 @@
       },
       "delete": {
         "summary": "Delete a car by ID",
-        "description": "This route delete a car by ID.",
+        "description": "This route deletes a car by ID.",
         "tags": ["Vehicle"],
         "parameters": [
           {
@@ -240,6 +241,263 @@
           },
           "404": {
             "description": "Car not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/drivers": {
+      "post": {
+        "summary": "Create a driver",
+        "description": "This route is responsible to create a new driver in database.",
+        "tags": ["Driver"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Driver"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/DriverResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Get list of drivers",
+        "description": "This route retrieves drivers, with optional filters for color and brand.",
+        "tags": ["Driver"],
+        "parameters": [
+          {
+            "name": "color",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "red"
+            }
+          },
+          {
+            "name": "brand",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "BMW"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DriverResponse"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Driver not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/drivers/{id}": {
+      "get": {
+        "summary": "Retrieve a driver by ID",
+        "description": "This route retrieves a driver from the database by its ID.",
+        "tags": ["Driver"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DriverResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Driver not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update a driver by ID",
+        "description": "This route updates a driver in the database by its ID.",
+        "tags": ["Driver"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Driver"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DriverResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Driver not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a driver by ID",
+        "description": "This route deletes a driver by ID.",
+        "tags": ["Driver"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content"
+          },
+          "404": {
+            "description": "Driver not found",
             "content": {
               "application/json": {
                 "schema": {
@@ -288,7 +546,30 @@
           {
             "properties": {
               "id": { "type": "number" },
-              "create_at": { "type": "string" },
+              "created_at": { "type": "string" },
+              "updated_at": { "type": "string" },
+              "deleted_at": { "type": "string" }
+            }
+          }
+        ]
+      },
+      "Driver": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "John Doe"
+          }
+        }
+      },
+      "DriverResponse": {
+        "allOf": [
+          { "$ref": "#/components/schemas/Driver" },
+          {
+            "properties": {
+              "id": { "type": "number" },
+              "created_at": { "type": "string" },
               "updated_at": { "type": "string" },
               "deleted_at": { "type": "string" }
             }
@@ -298,13 +579,14 @@
       "ValidationErrorResponse": {
         "properties": {
           "errors": {
-            "items": { "type": "string", "example": "Plate is required" }
+            "type": "array",
+            "items": { "type": "string", "example": "Name is required" }
           }
         }
       },
       "ErrorResponse": {
         "properties": {
-          "message": { "type": "string", "example": "Vehicle not found" }
+          "message": { "type": "string", "example": "Driver not found" }
         }
       }
     }

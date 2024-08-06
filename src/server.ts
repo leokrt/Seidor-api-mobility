@@ -6,6 +6,7 @@ import "dotenv/config";
 import { PostgresDataSource } from "./config/data-source";
 import logger from "./middlewares/logger";
 import carRouters from "./controllers/car";
+import driverRouters from "./controllers/driver";
 import errorHandler from "./middlewares/errorHandler";
 
 PostgresDataSource.initialize()
@@ -21,6 +22,7 @@ app.use(cors());
 app.use(express.json());
 app.use(logger);
 app.use("/cars", carRouters);
+app.use("/drivers", driverRouters);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(errorHandler);
 

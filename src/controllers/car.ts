@@ -18,7 +18,7 @@ router.post(
   async (req, res, next) => {
     try {
       const result = await carService.createCar(req.body as CarPayload);
-      res.json(result);
+      res.status(201).json(result);
     } catch (error) {
       next(error);
     }
@@ -27,13 +27,13 @@ router.post(
 
 router.get(
   "/:id",
-  param("id").notEmpty().withMessage("id from vehicle is required"),
+  param("id").notEmpty().withMessage("ID from vehicle is required"),
   validateRequest,
   async (req, res, next) => {
-    const { id } = req.params;
-
     try {
+      const { id } = req.params;
       const result = await carService.findById(parseInt(id));
+
       res.status(200).json(result);
     } catch (error) {
       next(error);
@@ -58,6 +58,7 @@ router.patch("/:id", async (req, res, next) => {
     const { id } = req.params;
     const updateData = req.body;
     const updatedCar = await carService.updateCar(Number(id), updateData);
+
     res.json(updatedCar);
   } catch (error) {
     next(error);
@@ -66,11 +67,12 @@ router.patch("/:id", async (req, res, next) => {
 
 router.delete(
   "/:id",
-  param("id").notEmpty().withMessage("id from vehicle is required"),
+  param("id").notEmpty().withMessage("ID from vehicle is required"),
   async (req, res, next) => {
     try {
       const { id } = req.params;
       await carService.deleteCar(Number(id));
+
       res.status(204).send();
     } catch (error) {
       next(error);
