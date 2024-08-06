@@ -1,9 +1,12 @@
 import cors from "cors";
-import express, { Router } from "express";
+import express from "express";
+import swaggerUi from "swagger-ui-express";
+import swaggerDocument from "./config/swagger.json";
 import "dotenv/config";
 import { PostgresDataSource } from "./config/data-source";
 import logger from "./middlewares/logger";
 import carRouters from "./controllers/car";
+import errorHandler from "./middlewares/errorHandler";
 
 PostgresDataSource.initialize()
   .then(() => {
@@ -14,14 +17,11 @@ PostgresDataSource.initialize()
   });
 
 const app = express();
-const route = Router();
-
 app.use(cors());
 app.use(express.json());
 app.use(logger);
-
 app.use("/cars", carRouters);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use(errorHandler);
 
-app.use(route);
-
-app.listen(4000, () => "server running on port 4000");
+app.listen(process.env.PORT, () => "Server running on port 4000");

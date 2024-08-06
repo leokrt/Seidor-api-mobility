@@ -5,6 +5,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   UpdateDateColumn,
+  PrimaryColumn,
 } from "typeorm";
 
 @Entity()
@@ -19,7 +20,7 @@ export class Car {
   color: string;
 
   @Column()
-  brand: number;
+  brand: string;
 
   @CreateDateColumn()
   created_at: Date;

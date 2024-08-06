@@ -21,12 +21,16 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "express-validator": "^7.1.0",
     "pg": "^8.4.0",
     "reflect-metadata": "^0.1.13",
+    "swagger-autogen": "^2.23.7",
+    "swagger-ui-express": "^5.0.1",
     "typeorm": "0.3.20"
   },
   "scripts": {
     "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/server.ts",
+    "dev:debug": "nodemon --watch 'src/**/*.ts' --inspect src/server.ts",
     "test": "jest --coverage",
     "typeorm": "typeorm-ts-node-commonjs",
     "migration:create": "typeorm migration:create ./src/migrations/",

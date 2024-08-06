@@ -1,5 +1,6 @@
 .idea/
 .vscode/
+.env
 dist/
 coverage/
 node_modules/
