@@ -1,6 +1,6 @@
 import { Car } from "../entities/Car";
 import { CarRepository } from "../repositories/car";
-import { CarPayload, ICarService } from "../types/car";
+import { CarPayload, FilterCar, ICarService } from "../types/car";
 import { BadRequestException, NotFoundException } from "../utils/errors";
 
 export class CarService implements ICarService {
@@ -10,8 +10,8 @@ export class CarService implements ICarService {
     this.carRepository = new CarRepository();
   }
 
-  async findAll(): Promise<Car[]> {
-    return this.carRepository.findAll();
+  async findAll(filter?: FilterCar): Promise<Car[]> {
+    return this.carRepository.findAll(filter);
   }
 
   async findById(id: number): Promise<Car | null> {

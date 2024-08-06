@@ -2,7 +2,7 @@ import { Router } from "express";
 import { CarService } from "../services/car";
 import { body, param } from "express-validator";
 import validateRequest from "../middlewares/validateRequest";
-import { CarPayload } from "../types/car";
+import { CarPayload, FilterCar } from "../types/car";
 
 const router = Router();
 const carService = new CarService();
@@ -41,8 +41,16 @@ router.get(
   }
 );
 
-router.get("/", async (req, res) => {
-  res.send({ status_code: 200, msg: "get car" });
+router.get("/", async (req, res, next) => {
+  try {
+    const { color, brand } = req.query;
+    const filter = { color, brand } as FilterCar;
+    const result = await carService.findAll(filter);
+
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
 });
 
 router.patch("/:id", async (req, res, next) => {

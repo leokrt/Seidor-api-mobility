@@ -6,8 +6,13 @@ export type CarPayload = {
   brand: string;
 };
 
+export type FilterCar = {
+  brand?: string;
+  color?: string;
+};
+
 export interface ICarService {
-  findAll(): Promise<Car[]>;
+  findAll(filter: FilterCar): Promise<Car[]>;
   findById(id: number): Promise<Car | null>;
   createCar(payload: CarPayload): Promise<Car>;
   updateCar(id: number, updateData: Partial<Car>): Promise<Car | null>;

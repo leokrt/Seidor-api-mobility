@@ -1,6 +1,7 @@
 import { Repository } from "typeorm";
 import { Car } from "../entities/Car";
 import { PostgresDataSource } from "../config/data-source";
+import { FilterCar } from "../types/car";
 
 export class CarRepository {
   private repository: Repository<Car>;
@@ -9,8 +10,15 @@ export class CarRepository {
     this.repository = PostgresDataSource.getRepository(Car);
   }
 
-  async findAll(): Promise<Car[]> {
-    return this.repository.find();
+  async findAll(filter?: FilterCar): Promise<Car[]> {
+    const where: FilterCar = {};
+    if (filter?.color) {
+      where.color = filter.color;
+    }
+    if (filter?.brand) {
+      where.brand = filter.brand;
+    }
+    return this.repository.find({ where });
   }
 
   async findById(id: number): Promise<Car | null> {

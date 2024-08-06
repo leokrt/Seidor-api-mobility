@@ -85,6 +85,38 @@ describe("Unit tests for Car service", () => {
     });
   });
 
+  describe("Retrieve a list of cars", () => {
+    it("should return all cars without filters", async () => {
+      const cars: Car[] = [car, { ...car, brand: "BMW", color: "green" }];
+      jest.spyOn(carRepository["repository"], "find").mockResolvedValue(cars);
+
+      const result = await serviceCar.findAll();
+
+      expect(result).toEqual(cars);
+      expect(carRepository["repository"].find).toHaveBeenCalledWith({
+        where: {},
+      });
+    });
+
+    it("should return filtered cars by color and brand", async () => {
+      const cars: Car[] = [car];
+      jest.spyOn(carRepository["repository"], "find").mockResolvedValue(cars);
+
+      const result = await serviceCar.findAll({
+        color: "red",
+        brand: "Toyota",
+      });
+
+      expect(result).toEqual(cars);
+      expect(carRepository["repository"].find).toHaveBeenCalledWith({
+        where: {
+          color: "red",
+          brand: "Toyota",
+        },
+      });
+    });
+  });
+
   describe("Retrieve a car by id", () => {
     it("should throw NotFoundException if the car does not exist", async () => {
       jest
