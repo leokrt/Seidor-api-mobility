@@ -10,7 +10,7 @@ export class UsageRepository {
     this.repository = PostgresDataSource.getRepository(Usage);
   }
 
-  async findAll(filter: FilterUsage): Promise<Usage[]> {
+  async findAll(filter: FilterUsage): Promise<Usage[] | []> {
     const findOptions: any = {
       relations: ["used_by", "used_car"],
     };
@@ -18,10 +18,10 @@ export class UsageRepository {
     if (filter.driverName || filter.carPlate) {
       findOptions.where = {};
       if (filter.driverName) {
-        findOptions.where.driver = { name: filter.driverName };
+        findOptions.where["used_by"] = { name: filter.driverName };
       }
       if (filter.carPlate) {
-        findOptions.where.car = { plate: filter.carPlate };
+        findOptions.where["used_car"] = { plate: filter.carPlate };
       }
     }
 

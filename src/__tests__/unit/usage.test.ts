@@ -7,7 +7,7 @@ import {
   UpdateUsagePayload,
   FilterUsage,
 } from "../../types/usage";
-import { NotFoundException } from "../../utils/errors";
+import { BadRequestException, NotFoundException } from "../../utils/errors";
 import { Driver } from "../../entities/Driver";
 import { Car } from "../../entities/Car";
 import { Usage } from "../../entities/Usage";
@@ -73,6 +73,7 @@ describe("UsageService", () => {
       const mockSave = jest
         .spyOn(usageRepository["repository"], "save")
         .mockResolvedValue(usage);
+      jest.spyOn(usageService, "checkAvailability").mockResolvedValue();
 
       const result = await usageService.createUsage(payload);
 
@@ -118,6 +119,62 @@ describe("UsageService", () => {
 
       await expect(usageService.createUsage(payload)).rejects.toThrow(
         NotFoundException
+      );
+    });
+
+    it("should throw BadRequestException if driver is already using another car", async () => {
+      const payload: UsagePayload = {
+        startDate: new Date(),
+        reason: "Business trip",
+        driverId: 1,
+        carId: 1,
+      };
+
+      const used_by = { id: 1, name: "John Doe" } as Driver;
+      const used_car = { id: 1, plate: "ABC-1234" } as Car;
+
+      jest
+        .spyOn(usageService, "checkAvailability")
+        .mockRejectedValue(
+          new BadRequestException(
+            409,
+            "Car already in use or driver has another car in use"
+          )
+        );
+
+      jest.spyOn(carService, "findById").mockResolvedValue(used_car);
+      jest.spyOn(driverService, "findById").mockResolvedValue(used_by);
+
+      await expect(usageService.createUsage(payload)).rejects.toThrow(
+        BadRequestException
+      );
+    });
+
+    it("should throw BadRequestException if car is already in use during the specified date", async () => {
+      const payload: UsagePayload = {
+        startDate: new Date(),
+        reason: "Business trip",
+        driverId: 1,
+        carId: 1,
+      };
+
+      const used_by = { id: 1, name: "John Doe" } as Driver;
+      const used_car = { id: 1, plate: "ABC-1234" } as Car;
+
+      jest
+        .spyOn(usageService, "checkAvailability")
+        .mockRejectedValue(
+          new BadRequestException(
+            409,
+            "Car already in use or driver has another car in use"
+          )
+        );
+
+      jest.spyOn(carService, "findById").mockResolvedValue(used_car);
+      jest.spyOn(driverService, "findById").mockResolvedValue(used_by);
+
+      await expect(usageService.createUsage(payload)).rejects.toThrow(
+        BadRequestException
       );
     });
   });
@@ -196,8 +253,8 @@ describe("UsageService", () => {
       expect(mockFind).toHaveBeenCalledWith(
         expect.objectContaining({
           where: {
-            driver: { name: filter.driverName },
-            car: { plate: filter.carPlate },
+            used_by: { name: filter.driverName },
+            used_car: { plate: filter.carPlate },
           },
         })
       );

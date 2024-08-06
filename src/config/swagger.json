@@ -564,19 +564,19 @@
         "tags": ["Usage"],
         "parameters": [
           {
-            "name": "carId",
+            "name": "driverName",
             "in": "query",
             "schema": {
-              "type": "integer",
-              "example": 1
+              "type": "string",
+              "example": "John Doe"
             }
           },
           {
-            "name": "driverId",
+            "name": "carPlate",
             "in": "query",
             "schema": {
-              "type": "integer",
-              "example": 1
+              "type": "string",
+              "example": "PMM-7878"
             }
           }
         ],
@@ -803,10 +803,6 @@
       "UsagePayload": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "integer",
-            "example": 1
-          },
           "carId": {
             "type": "integer",
             "example": 1

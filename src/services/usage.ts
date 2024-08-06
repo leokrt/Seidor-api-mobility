@@ -6,9 +6,10 @@ import {
   FilterUsage,
   IUsageService,
 } from "../types/usage";
-import { NotFoundException } from "../utils/errors";
+import { BadRequestException, NotFoundException } from "../utils/errors";
 import { DriverService } from "./driver";
 import { CarService } from "./car";
+import { IsNull, LessThanOrEqual, MoreThan, MoreThanOrEqual } from "typeorm";
 
 export class UsageService implements IUsageService {
   private usageRepository: UsageRepository;
@@ -21,12 +22,47 @@ export class UsageService implements IUsageService {
     this.carService = new CarService();
   }
 
-  // private async checkAvailability(
-  //   carId: number,
-  //   driverId: number
-  // ): Promise<void> {
-  //   const usageExists = this.usageRepository.repository.find({where: {used_by: driverId OR}})
-  // }
+  async checkAvailability(
+    carId: number,
+    driverId: number,
+    startDate: Date
+  ): Promise<void> {
+    const carUsage = await this.usageRepository.repository.findOne({
+      where: [
+        {
+          used_car: { id: carId },
+          end_date: MoreThanOrEqual(startDate),
+        },
+        {
+          used_car: { id: carId },
+          start_date: LessThanOrEqual(startDate),
+          end_date: IsNull(),
+        },
+      ],
+    });
+
+    const driverUsage = await this.usageRepository.repository.findOne({
+      where: [
+        {
+          used_by: { id: driverId },
+          start_date: LessThanOrEqual(startDate),
+          end_date: MoreThanOrEqual(startDate),
+        },
+        {
+          used_by: { id: driverId },
+          start_date: LessThanOrEqual(startDate),
+          end_date: IsNull(),
+        },
+      ],
+    });
+
+    if (carUsage || driverUsage) {
+      throw new BadRequestException(
+        409,
+        "Car already in use or driver has another car in use"
+      );
+    }
+  }
 
   async createUsage(payload: UsagePayload): Promise<Usage> {
     const driver = await this.driverService.findById(payload.driverId);
@@ -41,6 +77,11 @@ export class UsageService implements IUsageService {
       throw new NotFoundException(`Car with id ${payload.carId} not found`);
     }
 
+    await this.checkAvailability(
+      payload.carId,
+      payload.driverId,
+      payload.startDate
+    );
     const usage = new Usage();
     usage.start_date = payload.startDate;
     usage.reason = payload.reason;

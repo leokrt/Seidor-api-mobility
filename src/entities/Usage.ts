@@ -6,6 +6,7 @@ import {
   UpdateDateColumn,
   CreateDateColumn,
   DeleteDateColumn,
+  JoinColumn,
 } from "typeorm";
 import { Driver } from "./Driver";
 import { Car } from "./Car";
@@ -24,9 +25,13 @@ export class Usage {
   @Column()
   reason: string;
 
-  @ManyToOne((type) => Driver) used_by: Driver;
+  @ManyToOne(() => Driver)
+  @JoinColumn({ name: "used_by" })
+  used_by: Driver;
 
-  @ManyToOne((type) => Car) used_car: Car;
+  @ManyToOne(() => Car)
+  @JoinColumn({ name: "used_car" })
+  used_car: Car;
 
   @CreateDateColumn()
   created_at: Date;
